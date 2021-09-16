@@ -91,7 +91,7 @@ public class WQDataCollection extends AbstractDataCollection<Tripartition>
 			AbstractInference<Tripartition> inference) {
 		this.clusters = clusters;
 		this.SLOW = inference.getAddExtra() >= 2;
-		this.originalInompleteGeneTrees = inference.trees;
+		this.originalInompleteGeneTrees = inference.extraTrees; // Baqiao: we simply switch to using the extra trees
 		this.completedGeeneTrees = new ArrayList<Tree>();
 		this.options = inference.options;
 	}
@@ -690,6 +690,7 @@ public class WQDataCollection extends AbstractDataCollection<Tripartition>
 				// + clusters.getClusterCount());
 	
 			}
+			
 		}
 		
 		/**
@@ -782,8 +783,7 @@ public class WQDataCollection extends AbstractDataCollection<Tripartition>
 			}
 		}
 
-
-
+		reprocess(inference);
 	}
 
 	/**
@@ -810,7 +810,7 @@ public class WQDataCollection extends AbstractDataCollection<Tripartition>
 	 * @return
 	 */
 	int preProcess(AbstractInference<Tripartition> inference) {
-		System.err.println("Number of gene trees: "
+		System.err.println("Number of FASTRAL generator trees: "
 				+ this.originalInompleteGeneTrees.size());
 		// n = GlobalMaps.taxonIdentifier.taxonCount();
 
@@ -830,6 +830,29 @@ public class WQDataCollection extends AbstractDataCollection<Tripartition>
 		System.err.println(haveMissing + " trees have missing taxa");
 
 		return haveMissing;
+	}
+
+	public void reprocess(AbstractInference<Tripartition> inference) {
+		treeAllClusters = new ArrayList<STITreeCluster>();
+		System.err.println("Reprocessing to make our treeAllClusters look good.");
+		originalInompleteGeneTrees = inference.trees;
+		System.err.println("Number of actual gene trees: "
+				+ this.originalInompleteGeneTrees.size());
+
+		int haveMissing = 0;
+		for (Tree tree : this.originalInompleteGeneTrees) {
+			if (tree.getLeafCount() != GlobalMaps.taxonIdentifier.taxonCount()) {
+				haveMissing++;
+			}
+			String[] gtLeaves = tree.getLeaves();
+			STITreeCluster gtAll = GlobalMaps.taxonIdentifier.newCluster();
+			long ni = gtLeaves.length;
+			for (int i = 0; i < ni; i++) {
+				gtAll.addLeaf(GlobalMaps.taxonIdentifier.taxonId(gtLeaves[i]));
+			}
+			treeAllClusters.add(gtAll);
+		}
+		System.err.println(haveMissing + " trees have missing taxa");
 	}
 
 	/*

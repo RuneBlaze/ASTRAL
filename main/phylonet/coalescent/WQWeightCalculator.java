@@ -83,6 +83,7 @@ class WQWeightCalculator extends AbstractWeightCalculator<Tripartition> {
 		@Override
 		void setupGeneTrees(WQInference inference) {
 			System.err.println("Using polytree-based weight calculation.");
+			// System.err.println(inference.trees.size());
 			polytree = new Polytree(inference.trees, dataCollection);
 		}
 	}

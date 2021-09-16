@@ -308,7 +308,7 @@ public abstract class AbstractInference<T> {
 	      
 		if (extraTrees != null && extraTrees.size() > 0) {		
 	        System.err.println("calculating extra bipartitions from extra input trees ...");
-			dataCollection.addExtraBipartitionsByInput(extraTrees,options.isExtrarooted());
+			// dataCollection.addExtraBipartitionsByInput(extraTrees,options.isExtrarooted());
 			int s = this.dataCollection.clusters.getClusterCount();
 			/*
 			 * for (Integer c: clusters2.keySet()){ s += clusters2.get(c).size(); }
